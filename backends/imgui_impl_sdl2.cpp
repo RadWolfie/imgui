@@ -89,7 +89,7 @@
 #include <TargetConditionals.h>
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,4) && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(__amigaos4__)
+#if SDL_VERSION_ATLEAST(2,0,4) && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(__amigaos4__) && !defined(__XBOX__)
 #define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    1
 #else
 #define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    0
@@ -599,6 +599,10 @@ static void ImGui_ImplSDL2_UpdateGamepads()
     #undef MAP_ANALOG
 }
 
+#ifdef __XBOX__
+#include <hal/video.h>
+#endif
+
 void ImGui_ImplSDL2_NewFrame()
 {
     ImGui_ImplSDL2_Data* bd = ImGui_ImplSDL2_GetBackendData();
@@ -608,6 +612,7 @@ void ImGui_ImplSDL2_NewFrame()
     // Setup display size (every frame to accommodate for window resizing)
     int w, h;
     int display_w, display_h;
+#ifndef __XBOX__
     SDL_GetWindowSize(bd->Window, &w, &h);
     if (SDL_GetWindowFlags(bd->Window) & SDL_WINDOW_MINIMIZED)
         w = h = 0;
@@ -615,6 +620,11 @@ void ImGui_ImplSDL2_NewFrame()
         SDL_GetRendererOutputSize(bd->Renderer, &display_w, &display_h);
     else
         SDL_GL_GetDrawableSize(bd->Window, &display_w, &display_h);
+#else
+    VIDEO_MODE mode = XVideoGetMode();
+    w = display_w = mode.width;
+    h = display_h = mode.height;
+#endif
     io.DisplaySize = ImVec2((float)w, (float)h);
     if (w > 0 && h > 0)
         io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
