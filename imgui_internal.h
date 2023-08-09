@@ -419,10 +419,6 @@ IM_MSVC_RUNTIME_CHECKS_OFF
 #define ImSin(X)            sinf(X)
 #define ImAcos(X)           acosf(X)
 #define ImAtan2(Y, X)       atan2f((Y), (X))
-// Stub atof since we don't have float conversion support yet
-extern "C" double atof(const char* str) {
-    return 0.0;
-}
 #define ImAtof(STR)         atof(STR)
 //#define ImFloorStd(X)     floorf(X)           // We use our own, see ImFloor() and ImFloorSigned()
 #define ImCeil(X)           ceilf(X)
