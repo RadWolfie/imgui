@@ -166,6 +166,14 @@ void ImGui_ImplOpenGL2_RenderDrawData(ImDrawData* draw_data)
     if (fb_width == 0 || fb_height == 0)
         return;
 
+#ifdef IMGUI_PBGL_TEST_IMPLEMENT
+    // pbgl driver is missing support for:
+    // * GL_TEXTURE_BINDING_2D (glGetIntegerv)
+    // * GL_POLYGON_MODE (glGetIntegerv, can be implement)
+    // * GL_VIEWPORT (glGetIntegerv, can be implement)
+    // * GL_SCISSOR_BOX (glGetIntegerv)
+    // * glGetTexEnviv function not implemented
+
     // Backup GL state
     GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
     GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
@@ -174,6 +182,7 @@ void ImGui_ImplOpenGL2_RenderDrawData(ImDrawData* draw_data)
     GLint last_shade_model; glGetIntegerv(GL_SHADE_MODEL, &last_shade_model);
     GLint last_tex_env_mode; glGetTexEnviv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &last_tex_env_mode);
     glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
+#endif
 
     // Setup desired GL state
     ImGui_ImplOpenGL2_SetupRenderState(draw_data, fb_width, fb_height);
@@ -222,6 +231,7 @@ void ImGui_ImplOpenGL2_RenderDrawData(ImDrawData* draw_data)
         }
     }
 
+#ifndef IMGUI_PBGL_TEST_IMPLEMENT // see note above about pbgl driver missing support.
     // Restore modified GL state
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -237,6 +247,7 @@ void ImGui_ImplOpenGL2_RenderDrawData(ImDrawData* draw_data)
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
     glShadeModel(last_shade_model);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, last_tex_env_mode);
+#endif
 }
 
 bool ImGui_ImplOpenGL2_CreateFontsTexture()
