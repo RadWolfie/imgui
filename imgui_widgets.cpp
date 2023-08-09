@@ -27,6 +27,12 @@ Index of this file:
 // [SECTION] Widgets: Columns, BeginColumns, EndColumns, etc.
 
 */
+#ifdef NXDK
+// Stub atof since we don't have float conversion support yet
+static double atof(const char* str) {
+    return 0.0;
+}
+#endif
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
