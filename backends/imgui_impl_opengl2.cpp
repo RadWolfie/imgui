@@ -231,7 +231,7 @@ void ImGui_ImplOpenGL2_RenderDrawData(ImDrawData* draw_data)
         }
     }
 
-#ifndef IMGUI_PBGL_TEST_IMPLEMENT // see note above about pbgl driver missing support.
+#ifdef IMGUI_PBGL_TEST_IMPLEMENT // see note above about pbgl driver missing support.
     // Restore modified GL state
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
